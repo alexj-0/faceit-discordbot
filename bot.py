@@ -64,12 +64,7 @@ def format_leaderboard_embed(results):
         padding = " " * (30 - len(username))  # Calculate padding to make the length of username 30 characters
         padding2 = " " * (highest_elogain - len(str(elogain)))
         emoji_id = emoji_ids.get(int(level), None)
-        if emoji_id:
-            emoji = f"<:{level}:{emoji_id}>"
-        else:
-            emoji = ""
         trend = trend.replace('W', '🟢').replace('L', '🔴')
-        # Create a clickable username using Discord's markdown syntax for hyperlinks
         embed.add_field(name=f"<:{level}:{emoji_id}> ```{username}{padding}{trend} • {elo} ({elogain}){padding2}``` ", value="", inline=False)
 
     # Add footer with timestamp in BST (UTC+1)
@@ -80,10 +75,10 @@ def format_leaderboard_embed(results):
 
     return embed
 
-# Function to update leaderboard every minute
+# Function to update leaderboard every 3 minutes
 async def update_leaderboard():
     await client.wait_until_ready()
-    channel = client.get_channel(CHANNEL_ID)  # Replace your_channel_id_here with actual channel ID
+    channel = client.get_channel(CHANNEL_ID)  
     leaderboard_message = None  # Variable to store the leaderboard message
     while not client.is_closed():
         results = await fetch_data()
@@ -96,13 +91,13 @@ async def update_leaderboard():
             # Edit the existing message with the updated leaderboard and timestamp
             await leaderboard_message.edit(embed=leaderboard_embed)
 
-        await asyncio.sleep(180)  # 60 seconds = 1 minute
+        await asyncio.sleep(180)
 
 # Event: Bot is ready
 @client.event
 async def on_ready():
     print(f'We have logged in as {client.user}')
-    channel = client.get_channel(CHANNEL_ID)  # Replace your_channel_id_here with actual channel ID
+    channel = client.get_channel(CHANNEL_ID) 
 
     # Check for existing messages in the channel
     async for message in channel.history(limit=None):
