@@ -2,11 +2,19 @@ import discord
 import requests
 import asyncio
 import json
-import datetime
+import time
 
-# Discord bot token
 TOKEN = 'TOKEN' # REPLACE WITH YOUR BOT TOKEN
 CHANNEL_ID = 0 # REPLACE WITH YOUR CHANNEL ID
+
+# To remove the emoji before the username in the leaderboard
+showEmoji = True 
+
+# Leaderboard refresh interval (in seconds)
+refreshTimer = 180 
+
+# UTC offset for your timezone
+utcOffset = 1
 
 # List of usernames
 usernames = []
@@ -37,7 +45,8 @@ client = discord.Client(intents=intents)
 
 # Function to update leaderboard every 3 minutes
 def format_leaderboard_embed(results):
-    embed = discord.Embed(title="CS2 FACEIT Leaderboard", color=discord.Color.orange(), description="A leaderboard to show FACEIT recent match trend, elo and today's difference.")
+    timestamp = round(time.time())
+    embed = discord.Embed(title="CS2 FACEIT Leaderboard", color=discord.Color.orange(), description=f"A leaderboard to show FACEIT recent match trend, elo and today's difference.\n**Last updated: <t:{timestamp}:R>**")
     emoji_ids = {
         # REPLACE EACH 0 WITH EMOJI ID
         10: 0,
@@ -65,13 +74,10 @@ def format_leaderboard_embed(results):
         padding2 = " " * (highest_elogain - len(str(elogain)))
         emoji_id = emoji_ids.get(int(level), None)
         trend = trend.replace('W', '🟢').replace('L', '🔴')
-        embed.add_field(name=f"<:{level}:{emoji_id}> ```{username}{padding}{trend} • {elo} ({elogain}){padding2}``` ", value="", inline=False)
-
-    # Add footer with timestamp in BST (UTC+1)
-    timestamp_utc = datetime.datetime.utcnow()
-    timestamp_bst = timestamp_utc + datetime.timedelta(hours=1)  # Convert UTC to BST
-    timestamp = timestamp_bst.strftime("%b %d, %Y - %H:%M:%S")
-    embed.set_footer(text=f"Last updated: {timestamp} (UTC+1)", icon_url="https://play-lh.googleusercontent.com/4iFS-rI0ImIFZyTwjidPChDOTUGxZqX2sCBLRsf9g_noMIUnH9ywsCmCzSu9vSM9Jg")
+        if showEmoji:
+            embed.add_field(name=f"<:{level}:{emoji_id}> `{username}{padding}{trend} • {elo} ({elogain}){padding2}` ", value="", inline=False)
+        else:
+            embed.add_field(name=f"`{username}{padding}{trend} • {elo} ({elogain}){padding2}` ", value="", inline=False)
 
     return embed
 
@@ -91,7 +97,7 @@ async def update_leaderboard():
             # Edit the existing message with the updated leaderboard and timestamp
             await leaderboard_message.edit(embed=leaderboard_embed)
 
-        await asyncio.sleep(180)
+        await asyncio.sleep(refreshTimer)
 
 # Event: Bot is ready
 @client.event
