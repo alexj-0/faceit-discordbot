@@ -13,8 +13,8 @@ showEmoji = True
 # Leaderboard refresh interval (in seconds)
 refreshTimer = 180 
 
-# UTC offset for your timezone
-utcOffset = 1
+# Custom hex code for embed
+customColor = 0xff6d27
 
 # List of usernames
 usernames = []
@@ -46,7 +46,7 @@ client = discord.Client(intents=intents)
 # Function to update leaderboard every 3 minutes
 def format_leaderboard_embed(results):
     timestamp = round(time.time())
-    embed = discord.Embed(title="CS2 FACEIT Leaderboard", color=discord.Color.orange(), description=f"A leaderboard to show FACEIT recent match trend, elo and today's difference.\n**Last updated: <t:{timestamp}:R>**")
+    embed = discord.Embed(title="CS2 FACEIT Leaderboard", color=customColor, description=f"A leaderboard to show FACEIT recent match trend, elo and today's difference.\n**Last updated: <t:{timestamp}:R>**")
     emoji_ids = {
         # REPLACE EACH 0 WITH EMOJI ID
         10: 0,
