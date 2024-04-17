@@ -98,11 +98,6 @@ async def update_leaderboard():
                 # Edit the existing message with the updated leaderboard and timestamp
                 await leaderboard_message.edit(embed=leaderboard_embed)
 
-        except discord.errors.NotFound:
-            # Log the error and continue
-            print("Leaderboard message not found. Creating a new one.")
-            leaderboard_message = None
-
         except Exception as e:
             # Log any other unexpected errors
             print(f"An error occurred: {e}")
