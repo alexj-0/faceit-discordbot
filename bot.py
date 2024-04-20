@@ -65,7 +65,6 @@ def format_leaderboard_embed(results):
     # Get len of longest elo gain to generate padding after
     try:
         highest_elogain = max(len(str(item[-1])) for _, item in sorted_results)
-        print(highest_elogain)
     except:
         highest_elogain = 1
 
