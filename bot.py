@@ -80,31 +80,22 @@ def format_leaderboard_embed(results):
 
     return embed
 
-# Function to update leaderboard
+# Function to update leaderboard every 3 minutes
 async def update_leaderboard():
     await client.wait_until_ready()
-    channel = client.get_channel(CHANNEL_ID)
+    channel = client.get_channel(CHANNEL_ID)  
     leaderboard_message = None  # Variable to store the leaderboard message
     while not client.is_closed():
         results = await fetch_data()
         leaderboard_embed = format_leaderboard_embed(results)
 
         try:
-            # Check if leaderboard_message exists and is a valid message
-            if isinstance(leaderboard_message, discord.Message):
-                try:
-                    # Attempt to edit the existing message with the updated leaderboard and timestamp
-                    await leaderboard_message.edit(embed=leaderboard_embed)
-                except discord.NotFound:
-                    # If the message has been deleted, reset leaderboard_message to None
-                    leaderboard_message = None
-            if not isinstance(leaderboard_message, discord.Message):
-                # Delete all other messages in the channel
-                async for message in channel.history(limit=None):
-                    if message.author == client.user and message != leaderboard_message:
-                        await message.delete()
-                # Send the leaderboard and store the message
+            # If the leaderboard message hasn't been sent yet, send it
+            if leaderboard_message is None:
                 leaderboard_message = await channel.send(embed=leaderboard_embed)
+            else:
+                # Edit the existing message with the updated leaderboard and timestamp
+                await leaderboard_message.edit(embed=leaderboard_embed)
 
         except Exception as e:
             # Log any other unexpected errors
