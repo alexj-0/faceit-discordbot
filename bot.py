@@ -11,7 +11,7 @@ CHANNEL_ID = 0 # REPLACE WITH YOUR CHANNEL ID
 showEmoji = True 
 
 # Leaderboard refresh interval (in seconds)
-refreshTimer = 180 
+refreshTimer = 600
 
 # Custom hex code for embed
 customColor = 0xff6d27
@@ -28,6 +28,8 @@ async def fetch_data():
         if response.status_code == 200:
             try:
                 data = json.loads(response.text)
+                if "error" in data and data["error"]:
+                    continue  # Skip updating leaderboard if there's an error
                 level = data["level"]
                 elo = data["elo"]
                 trend = data["trend"]
@@ -45,8 +47,9 @@ client = discord.Client(intents=intents)
 
 # Function to update leaderboard every 3 minutes
 def format_leaderboard_embed(results):
-    timestamp = round(time.time())
-    embed = discord.Embed(title="CS2 FACEIT Leaderboard", color=customColor, description=f"A leaderboard to show FACEIT recent match trend, elo and today's difference.\n**Last updated: <t:{timestamp}:R>**")
+    timestamp = round(time.time()+refreshTimer)
+    embed = discord.Embed(title="CS2 FACEIT Leaderboard", color=customColor,
+                          description=f"A leaderboard to show FACEIT recent match trend, elo and today's difference.\n**Updating <t:{timestamp}:R>**")
     emoji_ids = {
         # REPLACE EACH 0 WITH EMOJI ID
         10: 0,
@@ -58,14 +61,14 @@ def format_leaderboard_embed(results):
         4: 0,
         3: 0,
         2: 0,
-        1: 0 
+        1: 0
     }
     sorted_results = sorted(results.items(), key=lambda x: x[1][1], reverse=True)  # Sort by elo rating (index 1)
 
     # Get len of longest elo gain to generate padding after
     try:
         highest_elogain = max(len(str(item[-1])) for _, item in sorted_results)
-    except:
+    except ValueError:
         highest_elogain = 1
 
     for username, (level, elo, trend, elogain) in sorted_results:
@@ -83,10 +86,13 @@ def format_leaderboard_embed(results):
 # Function to update leaderboard every 3 minutes
 async def update_leaderboard():
     await client.wait_until_ready()
-    channel = client.get_channel(CHANNEL_ID)  
+    channel = client.get_channel(CHANNEL_ID)
     leaderboard_message = None  # Variable to store the leaderboard message
     while not client.is_closed():
         results = await fetch_data()
+        if not results:  # If no valid data, skip updating the leaderboard
+            await asyncio.sleep(refreshTimer)
+            continue
         leaderboard_embed = format_leaderboard_embed(results)
 
         try:
@@ -107,7 +113,7 @@ async def update_leaderboard():
 @client.event
 async def on_ready():
     print(f'We have logged in as {client.user}')
-    channel = client.get_channel(CHANNEL_ID) 
+    channel = client.get_channel(CHANNEL_ID)
 
     # Check for existing messages in the channel
     async for message in channel.history(limit=None):
@@ -122,4 +128,3 @@ async def main():
     await client.start(TOKEN)
 
 asyncio.run(main())
-
