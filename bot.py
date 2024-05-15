@@ -47,9 +47,9 @@ client = discord.Client(intents=intents)
 
 # Function to update leaderboard every 3 minutes
 def format_leaderboard_embed(results):
-    timestamp = round(time.time()+refreshTimer)
+    timestamp = round(time.time())
     embed = discord.Embed(title="CS2 FACEIT Leaderboard", color=customColor,
-                          description=f"A leaderboard to show FACEIT recent match trend, elo and today's difference.\n**Updating <t:{timestamp}:R>**")
+                          description=f"A leaderboard to show FACEIT recent match trend, elo and today's difference.\n**Refreshed <t:{timestamp}:R>**")
     emoji_ids = {
         # REPLACE EACH 0 WITH EMOJI ID
         10: 0,
