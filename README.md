@@ -1,10 +1,8 @@
 
 # FACEIT Discord Leaderboard
-
 This bot will produce a FACEIT elo leaderboard in a Discord channel. It is created in Python, has no commands. It will remove its own messages upon restarting and edit the leaderboard message every 3 minutes upon refresh.
 
 ## Setting Up
-
 There are four things which are required:
 - List of usernames (FACEIT usernames)
 - A Discord bot token
@@ -21,10 +19,9 @@ Next, find a channel to contain the leaderboard. Ensure nobody can message in th
 
 Finally, add the emojis to your Discord server. Get the emoji IDs and assign them to each respective variable in `bot.py`. The assets for the FACEIT levels can be found in the assets folder in this repo. You can get the emoji ID by simply selecting an emoji and prefixing it with a backslash. It will return the emoji ID in the channel. If you wish to remove the emojis in the leaderboard, change the `showEmoji` variable to `False`.
 
-The bot also refreshes every three minutes. This can be adjusted by changing the `refreshTimer` variable. The embed message uses the hex code `#ff6d27`. This can also be changed by changing the `customColor` variable.
+The bot also refreshes every ten minutes. This can be adjusted by changing the `refreshTimer` variable. However, I recommend keeping this at 10 minutes to avoid being rate limited. The embed message uses the hex code `#ff6d27` for the colour strip along the left side of the leaderboard message. This can also be changed by changing the `customColor` variable.
 
 ## API 
-
 This bot collects data from the following API:
 http://api.faceit.myhosting.info:81/
 
@@ -41,5 +38,4 @@ Takes takes a username and we pull the following fields:
 - `today/elo`
 
 ## Example Output
-
 ![Leaderboard Screenshot](https://i.imgur.com/4UMOyfF.png)
