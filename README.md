@@ -38,4 +38,4 @@ Takes takes a username and we pull the following fields:
 - `today/elo`
 
 ## Example Output
-![Leaderboard Screenshot](https://i.imgur.com/GCQ31Yo.png)
+![Leaderboard Screenshot](https://i.imgur.com/mxskm7W.png)
