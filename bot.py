@@ -23,7 +23,7 @@ usernames = []
 async def fetch_data():
     results = {}
     for username in usernames:
-        url = f'http://api.faceit.myhosting.info:81/?n={username}'
+        url = f'https://faceit.lcrypt.eu/?n={username}'
         response = requests.get(url)
         if response.status_code == 200:
             try:
